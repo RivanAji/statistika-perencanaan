@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 270" role="img" aria-labelledby="title desc">
+<title id="title">Delapan baris untuk dua kejadian</title><desc id="desc">Bus lebih dari 15 menit satu, Bus tidak lebih dari 15 menit satu, bukan Bus lebih dari 15 menit dua, bukan Bus tidak lebih dari 15 menit empat.</desc>
+<rect width="760" height="270" rx="8" fill="#f7fbfc"/><text x="26" y="38" font-family="Arial,sans-serif" font-size="18" fill="#173440">A: Bus · B: waktu &gt; 15 menit</text>
+<g font-family="Arial,sans-serif" font-size="18" text-anchor="middle" fill="#173440"><text x="288" y="82">B: ya</text><text x="565" y="82">B: tidak</text><text x="70" y="145">A: ya</text><text x="70" y="225">A: tidak</text></g>
+<rect x="140" y="97" width="280" height="68" fill="#e3f3f7"/><rect x="425" y="97" width="280" height="68" fill="#fff"/><rect x="140" y="172" width="280" height="68" fill="#fff"/><rect x="425" y="172" width="280" height="68" fill="#e3f3f7"/>
+<g font-family="Arial,sans-serif" font-size="27" text-anchor="middle" fill="#173440"><text x="280" y="140">1</text><text x="565" y="140">1</text><text x="280" y="215">2</text><text x="565" y="215">4</text></g>
+</svg>

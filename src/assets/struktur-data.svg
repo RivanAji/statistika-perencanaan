@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 310" role="img" aria-labelledby="title desc">
+<title id="title">Struktur tabel statistik</title><desc id="desc">Dua kolom variabel, moda dan waktu dalam menit, serta tiga baris perjalanan ilustratif.</desc>
+<rect width="720" height="310" rx="8" fill="#f7fbfc"/><text x="28" y="39" font-family="Arial,sans-serif" font-size="18" fill="#173440">Satu baris = satu perjalanan ilustratif</text>
+<rect x="28" y="66" width="664" height="54" fill="#1459b5"/><text x="48" y="100" font-family="Arial,sans-serif" font-size="18" fill="#fff">moda · kategori</text><text x="380" y="100" font-family="Arial,sans-serif" font-size="18" fill="#fff">waktu_menit · besaran</text>
+<g font-family="Arial,sans-serif" font-size="18" fill="#173440"><rect x="28" y="120" width="664" height="50" fill="#fff"/><text x="48" y="152">Bus</text><text x="380" y="152">12</text><rect x="28" y="170" width="664" height="50" fill="#e3f3f7"/><text x="48" y="202">Bus</text><text x="380" y="202">18</text><rect x="28" y="220" width="664" height="50" fill="#fff"/><text x="48" y="252">Motor</text><text x="380" y="252">10</text></g>
+<path d="M360 67v202" stroke="#89a6af" stroke-width="2"/>
+</svg>

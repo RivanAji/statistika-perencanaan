@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" aria-labelledby="title desc">
+  <title id="title">Dua kejadian saling lepas</title>
+  <desc id="desc">Sebuah persegi panjang ruang sampel memuat dua lingkaran terpisah berlabel A dan B.</desc>
+  <rect width="720" height="360" rx="22" fill="#f5f9fc"/>
+  <text x="50" y="58" font-family="Arial, sans-serif" font-size="24" fill="#17324d">Ruang sampel S</text>
+  <rect x="35" y="78" width="650" height="245" rx="18" fill="#fff" stroke="#8da8bb" stroke-width="3"/>
+  <circle cx="250" cy="200" r="76" fill="#cbe9f5" stroke="#1876b8" stroke-width="4"/>
+  <circle cx="480" cy="200" r="76" fill="#fff0bf" stroke="#b78000" stroke-width="4"/>
+  <text x="236" y="209" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#17324d">A</text>
+  <text x="466" y="209" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#17324d">B</text>
+  <text x="267" y="295" font-family="Arial, sans-serif" font-size="18" fill="#475569">A ∩ B = ∅</text>
+</svg>

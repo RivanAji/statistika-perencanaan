@@ -1,0 +1,113 @@
+---
+title: Uji pemahaman Python
+description: Latihan terpadu untuk menguji sintaks, tipe, koleksi, kondisi, perulangan, dan fungsi.
+---
+
+import RunnablePlot from '../../../components/RunnablePlot.astro';
+
+Kerjakan berurutan. Coba prediksi keluaran sebelum menekan **Jalankan kode**. Ubah satu bagian setiap kali agar terlihat konsep mana yang mengubah hasil.
+
+## Soal 1 — baca ekspresi
+
+Tanpa menjalankan, tebak keluaran. Mengapa hasil kedua bernilai `True`?
+
+```python
+jarak_meter = 450
+waktu_menit = 12
+print(jarak_meter / 1000)
+print(waktu_menit >= 10)
+```
+
+<details>
+<summary>Pembahasan</summary>
+<p>Keluaran `0.45` lalu `True`. Pembagian mengubah meter menjadi kilometer; perbandingan `&gt;=` menghasilkan nilai boolean. Satuan hasil pertama adalah kilometer.</p>
+</details>
+
+## Soal 2 — lengkapi aturan
+
+Jalankan kode, lalu ganti `>` dengan `>=`. Apa yang berubah untuk nilai tepat 15?
+
+```python
+waktu_menit = [12, 15, 18]
+for menit in waktu_menit:
+    if menit > 15:
+        print(menit, "melewati batas")
+```
+
+<details>
+<summary>Pembahasan</summary>
+<p>Dengan `&gt;`, hanya 18 melewati batas. Dengan `&gt;=`, 15 dan 18 ikut tercetak. Simbol batas merupakan bagian dari definisi kategori, bukan hiasan sintaks.</p>
+</details>
+
+## Soal 3 — hitung, jangan menebak
+
+Pada kode berikut, ubah `ambang` menjadi 15 lalu 20. Cetak nilai waktu yang lolos dan jumlahnya. Perhatikan bahwa list dipakai berulang, sedangkan tuple, set, dan dictionary mengerjakan tugas yang berbeda.
+
+<RunnablePlot title="Lab Python: hitung perjalanan yang melewati ambang" code={`waktu_menit = [8, 12, 12, 15, 18, 30]
+ambang = 15
+jumlah = 0
+terpilih = []
+
+for menit in waktu_menit:
+    if menit > ambang:
+        terpilih.append(menit)
+        jumlah += 1
+
+print("Nilai terpilih:", terpilih)
+print("Jumlah nilai di atas ambang:", jumlah)
+print("Nilai unik:", sorted(set(waktu_menit)))
+
+zona = {"nama": "A", "jumlah_lama": jumlah}
+print("Catatan:", zona)
+`} />
+
+### Cara membaca kode
+
+| Bagian | Yang dilakukan |
+|---|---|
+| `waktu_menit = [...]` | Menyimpan enam pengamatan berurutan di dalam list. |
+| `ambang = 15` | Memberi nama pada batas yang akan diuji. |
+| `jumlah = 0` | Menyiapkan penghitung sebelum perulangan dimulai. |
+| `terpilih = []` | Menyiapkan list kosong untuk menyimpan nilai yang lolos. |
+| `for menit in waktu_menit:` | Mengambil satu nilai pada setiap putaran. |
+| `if menit > ambang:` | Memeriksa syarat untuk nilai yang sedang diproses. |
+| `.append(menit)` | Menambahkan nilai yang lolos ke akhir list. |
+| `jumlah += 1` | Menambah penghitung satu setiap kali syarat benar. |
+| `set(waktu_menit)` | Mengambil nilai berbeda saja; ini membuang informasi banyaknya pengulangan. |
+| `zona = {...}` | Dictionary memasangkan nama kunci dengan nilai. |
+
+Keluaran awal: nilai terpilih `[18, 30]`, jumlah `2`, dan nilai unik `[8, 12, 15, 18, 30]`. Nilai 12 muncul dua kali pada list tetapi hanya sekali pada set. Bila ambang diubah menjadi 20, nilai terpilih menjadi `[30]` dan jumlahnya 1.
+
+## Soal 4 — tulis fungsi ringkas
+
+Tambahkan fungsi yang menerima list waktu dan mengembalikan median. Gunakan `statistics.median` agar perhatian tertuju pada masukan, pemanggilan fungsi, dan hasilnya.
+
+```python
+from statistics import median
+
+def nilai_tengah(nilai):
+    return median(nilai)
+
+print(nilai_tengah([8, 12, 18]))
+```
+
+Keluaran: `12`. `return` mengirim hasil dari fungsi; `print` menampilkannya.
+
+## Tantangan mandiri
+
+1. Ganti data menjadi `[6, 10, 10, 14, 22]`. Prediksi jumlah yang `> 10`.
+2. Ubah aturan menjadi `>= 10`. Nilai mana yang baru ikut dihitung?
+3. Buat tuple bernama `lokasi = (112.75, -7.25)` dan cetak komponen pertama. Tuliskan urutan koordinat yang Anda gunakan.
+4. Buat dictionary dengan kunci `"kode"` dan `"waktu_menit"`. Ambil nilai waktunya menggunakan kunci.
+5. Jelaskan mengapa set tidak cocok untuk menghitung frekuensi tiap waktu.
+
+<details>
+<summary>Kunci cek mandiri</summary>
+<p>1. Dua nilai: 14 dan 22. 2. Nilai 10 muncul dua kali dan ikut dihitung, jadi jumlah menjadi empat. 3. Komponen pertama adalah 112.75; pastikan konvensi urutannya ditulis. 4. Akses dengan `catatan["waktu_menit"]`. 5. Set menyimpan nilai unik dan menghilangkan informasi pengulangan; gunakan list atau penghitung frekuensi.</p>
+</details>
+
+## Kesimpulan
+
+Python menjalankan instruksi berurutan. Variabel menyimpan nilai, kondisi memilih tindakan, perulangan memproses banyak nilai, dan fungsi memberi nama pada langkah yang dapat dipakai ulang. List mempertahankan urutan dan duplikasi; tuple menyimpan urutan tetap; set menyimpan anggota unik; dictionary memasangkan kunci dengan nilai. Dalam analisis data, pahami dulu apa yang dihitung sebelum mempercayai keluaran kode.
+
+Jika kode gagal, baca pesan galat, cocokkan nama dan tipe, periksa indentasi, lalu jalankan kembali seluruh sel yang diperlukan.

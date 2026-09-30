@@ -1,0 +1,185 @@
+---
+title: Peluang bersyarat dan independensi
+description: Membaca peluang dengan syarat, memilih penyebut yang tepat, dan membedakan saling lepas dari independen.
+---
+
+import RunnablePlot from '../../../components/RunnablePlot.astro';
+
+Untuk menghitung peluang biasa, kita membagi hasil yang memenuhi syarat dengan seluruh hasil yang mungkin. Kadang-kadang pertanyaannya lebih khusus: “Di antara halte yang berada di pusat kota, berapa yang memiliki tempat berteduh?” Frasa **di antara halte yang berada di pusat kota** mengubah kelompok yang kita hitung.
+
+Peluang bersyarat menjawab pertanyaan setelah satu informasi diketahui. Kita mulai dengan tabel kecil supaya pembilang dan penyebut terlihat sebelum memakai simbol.
+
+## Mulai dari tabel kecil
+
+Anggap kita memeriksa 10 kartu contoh. Setiap kartu memiliki warna dan tanda bintang. Angka berikut hanya contoh buatan untuk belajar membaca tabel.
+
+| | Ada bintang | Tidak ada bintang | Total |
+|---|---:|---:|---:|
+| Biru | 3 | 1 | 4 |
+| Kuning | 2 | 4 | 6 |
+| Total | 5 | 5 | 10 |
+
+Kita beri nama kejadian:
+
+- `A`: kartu berwarna biru.
+- `B`: kartu memiliki bintang.
+
+Dari semua 10 kartu, 5 memiliki bintang. Jadi `P(B) = 5/10`. Jika pertanyaannya berubah menjadi “di antara kartu biru, berapa yang berbintang?”, kita hanya melihat baris Biru. Dari 4 kartu biru, 3 berbintang. Maka peluangnya `3/4`.
+
+Peluang tersebut ditulis `P(B | A)` dan dibaca “peluang B, jika A diketahui” atau “peluang berbintang di antara kartu biru”. Garis tegak bukan tanda pembagian. Garis itu mengingatkan kita bahwa informasi A telah membatasi kelompok yang dihitung.
+
+## Perhatikan penyebutnya
+
+Rumus peluang bersyarat adalah:
+
+```text
+P(B | A) = P(A dan B) / P(A)
+```
+
+Dengan hitungan kartu:
+
+```text
+P(B | A) = 3/4 = 0,75
+```
+
+Pembilangnya 3 kartu yang biru dan berbintang. Penyebutnya 4 kartu biru, bukan 10 kartu seluruhnya. Jika pertanyaan dibalik menjadi “di antara kartu berbintang, berapa yang biru?”, penyebut berubah menjadi 5:
+
+```text
+P(A | B) = 3/5 = 0,60
+```
+
+Jadi `P(B | A)` tidak sama dengan `P(A | B)`. Sebelum menghitung, lingkari kelompok setelah kata **di antara**. Itulah penyebutnya.
+
+<details>
+<summary>Tambahan: rumus Bayes membalik informasi yang diketahui</summary>
+<p>Tabel sudah cukup untuk menjawab contoh kartu. Rumus Bayes berguna saat kita mengetahui peluang B di antara A, lalu ingin mencari peluang A di antara B:</p>
+<p><code>P(A | B) = P(B | A) × P(A) / P(B)</code></p>
+<p>Dari tabel: <code>(3/4 × 4/10) / (5/10) = 3/5 = 0,60</code>. Hasilnya sama dengan cara langsung menghitung 3 kartu biru berbintang dari 5 kartu berbintang. Rumus ini merangkum langkah tabel, bukan pertanyaan yang berbeda.</p>
+</details>
+
+:::note[Terjemahkan sebelum menghitung]
+“Peluang kartu berbintang di antara kartu biru” berarti pilih baris Biru, lalu lihat bagian berbintang: `3 dari 4`. “Peluang kartu biru di antara kartu berbintang” berarti pilih kolom berbintang: `3 dari 5`.
+:::
+
+:::caution[Jika kelompok syarat kosong]
+Jika tidak ada kartu biru, kita tidak dapat menghitung peluang “berbintang di antara kartu biru” dari daftar itu. Penyebutnya nol, sehingga peluang bersyarat tersebut tidak terdefinisi. Jangan menuliskannya sebagai 0.
+:::
+
+## Apa arti independen?
+
+Dua kejadian **independen** jika mengetahui satu kejadian tidak mengubah peluang kejadian yang lain. Pada tabel kartu tadi, peluang berbintang dari semua kartu adalah `5/10 = 0,5`. Peluang berbintang di antara kartu biru adalah `3/4 = 0,75`. Nilainya berbeda, jadi pada contoh ini warna dan bintang tidak independen.
+
+Kita dapat membandingkan dua nilai:
+
+```text
+P(B | A) dengan P(B)
+```
+
+- Jika keduanya sama, data atau model menunjukkan independensi.
+- Jika berbeda, mengetahui A mengubah peluang B.
+
+Kesamaan dari sampel kecil belum membuktikan independensi di dunia nyata. Kita perlu mempertimbangkan cara data dikumpulkan, jumlah pengamatan, dan apakah pola itu masuk akal.
+
+### Contoh independen
+
+Bayangkan 10 kartu lain: ada 4 kartu biru dan 6 kartu kuning. Tepat setengah dari tiap warna memiliki bintang.
+
+| | Ada bintang | Tidak ada bintang | Total |
+|---|---:|---:|---:|
+| Biru | 2 | 2 | 4 |
+| Kuning | 3 | 3 | 6 |
+| Total | 5 | 5 | 10 |
+
+`P(B) = 5/10 = 0,5`, sedangkan `P(B | A) = 2/4 = 0,5`. Mengetahui kartu berwarna biru tidak mengubah peluang adanya bintang. Dalam model tabel ini, A dan B independen.
+
+## Saling lepas bukan berarti independen
+
+Istilah ini mudah tertukar, jadi perhatikan pertanyaan yang dijawab:
+
+| Istilah | Pertanyaan | Contoh pada satu dadu |
+|---|---|---|
+| Saling lepas | Bisakah kedua kejadian terjadi pada hasil yang sama? | “Keluar 1” dan “keluar 6” tidak bisa terjadi bersama |
+| Independen | Apakah mengetahui satu kejadian mengubah peluang yang lain? | Hasil lemparan pertama dan kedua tidak saling mengubah pada dadu adil |
+
+Kejadian “keluar 1” dan “keluar 6” pada lemparan yang sama saling lepas. Namun keduanya tidak independen: jika kita sudah tahu hasilnya 1, peluang hasilnya 6 pada lemparan yang sama menjadi 0.
+
+Sebaliknya, hasil lemparan pertama tidak menentukan hasil lemparan kedua. Jika dadu adil dilempar dua kali, kejadian “lemparan pertama 1” dan “lemparan kedua 6” dapat terjadi bersama, dan peluang lemparan kedua tetap `1/6` setelah hasil pertama diketahui. Dalam model dadu adil, keduanya independen.
+
+![Dua kejadian saling lepas berada terpisah di dalam ruang sampel. Gambar ini menunjukkan bahwa keduanya tidak dapat terjadi bersama, bukan bahwa peluangnya sama.](../../../assets/venn-eksklusif.svg)
+
+:::caution[Jangan samakan dua istilah]
+Jika dua kejadian saling lepas dan masing-masing memiliki peluang lebih dari 0, keduanya tidak independen. Terjadinya satu kejadian membuat kejadian lainnya mustahil pada percobaan yang sama.
+:::
+
+## Menghitungnya dengan Python
+
+Kita tulis tiap kartu sebagai pasangan warna dan tanda bintang. Kode menghitung jumlah kartu pada setiap kelompok, lalu membuat peluang dengan penyebut yang sesuai.
+
+```python
+kartu = [
+    ("biru", True), ("biru", True), ("biru", True), ("biru", False),
+    ("kuning", True), ("kuning", True),
+    ("kuning", False), ("kuning", False), ("kuning", False), ("kuning", False)
+]
+
+biru = [item for item in kartu if item[0] == "biru"]
+berbintang = [item for item in kartu if item[1]]
+biru_berbintang = [item for item in kartu if item[0] == "biru" and item[1]]
+
+print("P(B):", len(berbintang), "/", len(kartu), "=", len(berbintang) / len(kartu))
+print("P(B | A):", len(biru_berbintang), "/", len(biru), "=", len(biru_berbintang) / len(biru))
+print("P(A | B):", len(biru_berbintang), "/", len(berbintang), "=", len(biru_berbintang) / len(berbintang))
+```
+
+Keluaran:
+
+```text
+P(B): 5 / 10 = 0.5
+P(B | A): 3 / 4 = 0.75
+P(A | B): 3 / 5 = 0.6
+```
+
+Setiap pasangan berisi warna pada posisi pertama dan nilai `True` atau `False` pada posisi kedua. Daftar `biru` menjadi penyebut `P(B | A)`. Daftar `berbintang` menjadi penyebut `P(A | B)`. Periksa penyebut itu sebelum mempercayai angka keluaran.
+
+## Lab: ubah informasi yang diketahui
+
+Jalankan contoh interaktif ini. Ubah isi daftar `kartu`, lalu perhatikan apakah `P(B | A)` sama dengan `P(B)`. Jika sama, pola pada daftar tersebut konsisten dengan independensi. Daftar kecil tetap hanya contoh, bukan bukti tentang populasi yang lebih luas.
+
+<RunnablePlot title="Peluang bersyarat dari tabel kartu" code={`kartu = [
+    ("biru", True), ("biru", True), ("biru", True), ("biru", False),
+    ("kuning", True), ("kuning", True),
+    ("kuning", False), ("kuning", False), ("kuning", False), ("kuning", False)
+]
+
+biru = [item for item in kartu if item[0] == "biru"]
+berbintang = [item for item in kartu if item[1]]
+biru_berbintang = [item for item in kartu if item[0] == "biru" and item[1]]
+
+p_bintang = len(berbintang) / len(kartu)
+p_bintang_jika_biru = len(biru_berbintang) / len(biru)
+print("P(bintang):", round(p_bintang, 2))
+print("P(bintang di antara kartu biru):", round(p_bintang_jika_biru, 2))
+print("Sama?", p_bintang == p_bintang_jika_biru)
+`} />
+
+### Periksa hasil
+
+Hasilnya `P(bintang) = 0.5` dan `P(bintang di antara kartu biru) = 0.75`. Keduanya tidak sama. Jika Anda mengganti daftar dengan contoh independen di atas, kedua peluang menjadi 0,5.
+
+## Uji pemahaman
+
+1. Dari tabel kartu pertama, berapa `P(biru | berbintang)`? Tuliskan penyebutnya sebelum menghitung.
+2. Jika `P(B) = 0,4` dan `P(B | A) = 0,4`, apa yang dapat dikatakan tentang A dan B dalam model tersebut?
+3. Pada satu dadu, kejadian A = “hasil genap” dan B = “hasil 1”. Apakah keduanya saling lepas? Apakah keduanya independen?
+4. Dua pengamatan dilakukan pada satu daftar lokasi, tetapi lokasi dipilih karena mudah dijangkau. Apakah angka peluang bersyarat dari daftar itu otomatis berlaku untuk semua lokasi? Jelaskan.
+
+<details>
+<summary>Pembahasan</summary>
+<p>1. Ada 3 kartu biru dari 5 kartu berbintang, jadi P(biru | berbintang) = 3/5. Penyebutnya 5. 2. Peluang B tidak berubah setelah A diketahui, sehingga A dan B independen dalam model tersebut. 3. Keduanya saling lepas karena hasil 1 bukan genap. Keduanya tidak independen: setelah diketahui hasilnya genap, peluang hasil 1 menjadi 0. 4. Tidak otomatis. Pemilihan yang hanya mencakup lokasi mudah dijangkau dapat membuat kelompok pengamatan berbeda dari seluruh lokasi.</p>
+</details>
+
+## Kesimpulan
+
+Peluang bersyarat menghitung peluang di dalam kelompok yang sudah dibatasi oleh informasi tertentu. Baca frasa “di antara” untuk menemukan penyebutnya. Independensi berarti informasi tentang satu kejadian tidak mengubah peluang kejadian lain. Saling lepas berarti dua kejadian tidak bisa terjadi bersama. Keduanya menjawab pertanyaan yang berbeda.
+
+Lanjut ke [menghitung peluang bertahap](../peluang-bertahap/) untuk mengikuti perubahan peluang dari satu langkah ke langkah berikutnya.

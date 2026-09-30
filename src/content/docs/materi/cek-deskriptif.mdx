@@ -1,0 +1,58 @@
+---
+title: Uji praktik statistik deskriptif
+description: Gunakan lab Python untuk memeriksa ukuran pusat, sebaran, dan pengaruh nilai ekstrem.
+---
+
+import RunnablePlot from '../../../components/RunnablePlot.astro';
+
+Gunakan data kecil berikut. Sebelum menjalankan lab, tulis prediksi mean, median, jangkauan, dan nilai yang mungkin melewati pagar 1,5 × IQR.
+
+<RunnablePlot title="Lab evaluasi statistik deskriptif" code={`import matplotlib
+matplotlib.use("AGG")
+from statistics import mean, median
+import numpy as np
+import matplotlib.pyplot as plt
+
+waktu = [8, 10, 12, 12, 14, 16, 18, 30]
+q1, q3 = np.quantile(waktu, [0.25, 0.75], method="linear")
+iqr = q3 - q1
+batas_bawah = q1 - 1.5 * iqr
+batas_atas = q3 + 1.5 * iqr
+kandidat = [x for x in waktu if x < batas_bawah or x > batas_atas]
+
+print("n:", len(waktu))
+print("Mean:", round(mean(waktu), 2))
+print("Median:", median(waktu))
+print("Jangkauan:", max(waktu) - min(waktu))
+print("Q1, Q3, IQR:", round(q1, 2), round(q3, 2), round(iqr, 2))
+print("Pagar atas:", round(batas_atas, 2))
+print("Kandidat untuk diperiksa:", kandidat)
+
+fig, ax = plt.subplots(figsize=(7, 4))
+ax.boxplot(waktu, vert=False)
+ax.scatter(waktu, [1] * len(waktu), alpha=0.45, color="#1876b8",
+           label="Pengamatan")
+ax.set_yticks([])
+ax.set_xlabel("Waktu (menit)")
+ax.set_title("Boxplot dan nilai pengamatan")
+ax.legend()
+fig.tight_layout()
+fig.savefig("/tmp/statistik-plot.svg")
+`} />
+
+### Soal
+
+1. Ubah 30 menjadi 20. Ukuran mana yang berubah paling jelas? Mana yang tetap?
+2. Ubah 30 menjadi 300. Apakah itu bukti salah input? Sebutkan pemeriksaan sebelum mengubah data.
+3. Hitung mean dan median setelah setiap perubahan. Jelaskan mengapa keduanya merespons secara berbeda.
+4. Apa arti nilai yang melampaui pagar 1,5 × IQR? Apakah boleh langsung dibuang?
+5. Pilih grafik untuk menunjukkan bentuk keseluruhan data dan jelaskan informasi yang hilang dari boxplot.
+
+<details>
+<summary>Hasil acuan dan pembahasan</summary>
+<p>Untuk data awal, n = 8, mean = 15, median = 13, jangkauan = 22, Q1 = 11,5, Q3 = 16,5, IQR = 5, pagar atas = 24, dan 30 adalah kandidat untuk ditinjau. Mengganti 30 menjadi 20 menghasilkan mean 13,75; median tetap 13; IQR tetap 5, dan tidak ada kandidat menurut pagar atas. Mengganti menjadi 300 membuat mean naik tajam, tetapi keputusan memerlukan pemeriksaan formulir/sumber, satuan, definisi, dan konteks. Pagar menandai nilai untuk diperiksa, bukan mengidentifikasi kesalahan secara otomatis. Histogram menunjukkan bentuk sebaran yang lebih rinci; boxplot meringkas dan dapat menyembunyikan pola atau jumlah nilai yang sama.</p>
+</details>
+
+## Kesimpulan
+
+Pusat dan penyebaran perlu dibaca bersama. Mean peka terhadap besar setiap nilai; median dan IQR lebih tahan terhadap nilai ekstrem, tetapi tidak menjelaskan semuanya. Grafik membantu menemukan pola dan titik untuk ditelusuri. Keputusan pembersihan harus bersumber dari bukti dan dicatat, bukan dibuat agar ringkasan terlihat rapi.

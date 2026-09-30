@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 390" role="img" aria-labelledby="title desc">
+  <title id="title">Irisan dan gabungan dua kejadian pada satu dadu</title>
+  <desc id="desc">Dalam ruang sampel hasil 1 sampai 6, lingkaran A berisi angka genap 2, 4, dan 6; lingkaran B berisi angka lebih dari 3, yaitu 4, 5, dan 6. Irisan adalah 4 dan 6. Gabungan adalah 2, 4, 5, dan 6.</desc>
+  <rect width="760" height="390" rx="18" fill="#f5f9fc"/>
+  <text x="46" y="46" font-family="Arial, sans-serif" font-size="23" font-weight="700" fill="#17324d">Ruang sampel S: {1, 2, 3, 4, 5, 6}</text>
+  <rect x="35" y="66" width="690" height="280" rx="18" fill="#fff" stroke="#8da8bb" stroke-width="3"/>
+  <ellipse cx="330" cy="220" rx="190" ry="105" fill="#55b8d9" fill-opacity=".44" stroke="#1876b8" stroke-width="4"/>
+  <ellipse cx="445" cy="220" rx="190" ry="105" fill="#f4c95d" fill-opacity=".45" stroke="#b78000" stroke-width="4"/>
+  <text x="190" y="140" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#1459b5">A: genap</text>
+  <text x="502" y="140" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#8a6200">B: lebih dari 3</text>
+  <g font-family="Arial, sans-serif" font-size="22" text-anchor="middle" dominant-baseline="middle" fill="#17324d">
+    <circle cx="85" cy="170" r="25" fill="#fff" stroke="#8da8bb" stroke-width="2"/><text x="85" y="170">1</text>
+    <circle cx="220" cy="220" r="25" fill="#fff" stroke="#1876b8" stroke-width="2"/><text x="220" y="220">2</text>
+    <circle cx="85" cy="276" r="25" fill="#fff" stroke="#8da8bb" stroke-width="2"/><text x="85" y="276">3</text>
+    <circle cx="385" cy="197" r="25" fill="#fff" stroke="#1459b5" stroke-width="2"/><text x="385" y="197">4</text>
+    <circle cx="560" cy="220" r="25" fill="#fff" stroke="#b78000" stroke-width="2"/><text x="560" y="220">5</text>
+    <circle cx="385" cy="270" r="25" fill="#fff" stroke="#1459b5" stroke-width="2"/><text x="385" y="270">6</text>
+  </g>
+  <text x="46" y="374" font-family="Arial, sans-serif" font-size="17" fill="#475569">Irisan A ∩ B = {4, 6}. Gabungan A ∪ B = {2, 4, 5, 6}.</text>
+</svg>

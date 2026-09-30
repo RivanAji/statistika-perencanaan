@@ -1,0 +1,157 @@
+---
+title: Peluang melalui simulasi
+description: Mengulang percobaan acak, membaca frekuensi relatif, dan memahami variasi hasil.
+---
+
+import RunnablePlot from '../../../components/RunnablePlot.astro';
+
+Peluang teoretis sebuah sisi pada koin adil adalah 0,5. Namun sepuluh lemparan tidak harus menghasilkan lima angka. Simulasi memperlihatkan bagaimana proporsi empiris berubah ketika percobaan diulang.
+
+## Satu percobaan, lalu banyak percobaan
+
+numpy menyediakan generator bilangan acak. Nilai 1 kita artikan sebagai angka, 0 sebagai gambar. Seed 42 membuat contoh dapat diulang; seed tidak membuat percobaan menjadi bukti tentang koin fisik.
+
+~~~python
+import numpy as np
+
+rng = np.random.default_rng(42)
+lemparan = rng.integers(0, 2, size=1000)
+for n in [10, 100, 1000]:
+    print(n, int(lemparan[:n].sum()), round(lemparan[:n].mean(), 3))
+~~~
+
+Keluaran dengan seed 42:
+
+~~~text
+10 4 0.4
+100 52 0.52
+1000 509 0.509
+~~~
+
+Kolom pertama banyak lemparan, kedua jumlah angka, ketiga proporsi angka. Pada 10 lemparan proporsinya 0,4; pada 1.000 lemparan 0,509. Bilangan ini mendekati 0,5, tetapi tidak harus tepat 0,5.
+
+## Lab: amati proporsi saat percobaan bertambah
+
+Jalankan kode, lalu ganti jumlah_lemparan menjadi 30 atau 5000. Perhatikan bahwa satu hasil simulasi akan berubah; seed tetap memungkinkan orang lain mengulang lintasan yang sama.
+
+<RunnablePlot title="Lintasan proporsi koin" code={`import matplotlib
+matplotlib.use("AGG")
+import numpy as np
+import matplotlib.pyplot as plt
+
+jumlah_lemparan = 1000
+rng = np.random.default_rng(42)
+lemparan = rng.integers(0, 2, size=jumlah_lemparan)
+urutan = np.arange(1, jumlah_lemparan + 1)
+proporsi = np.cumsum(lemparan) / urutan
+
+for n in [10, 100, jumlah_lemparan]:
+    n_efektif = min(n, jumlah_lemparan)
+    print("Lemparan:", n_efektif,
+          "| jumlah angka:", int(lemparan[:n_efektif].sum()),
+          "| proporsi:", round(float(proporsi[n_efektif - 1]), 3))
+
+plt.figure(figsize=(7, 3.8))
+plt.plot(urutan, proporsi, color="#1876b8", linewidth=1.5)
+plt.axhline(0.5, color="#d49b18", linestyle="--", label="Peluang teoretis = 0,5")
+plt.xlabel("Jumlah lemparan")
+plt.ylabel("Proporsi angka sampai titik ini")
+plt.ylim(0, 1)
+plt.legend()
+plt.tight_layout()
+plt.savefig("/tmp/statistik-plot.svg")
+`} />
+
+Garis mendatar menunjukkan peluang teoretis 0,5. Garis berwarna adalah proporsi berjalan. Ia dapat naik atau turun setelah lemparan berikutnya, meski secara umum fluktuasi relatif menjadi lebih kecil.
+
+## Baca grafik dengan hati-hati
+
+Ini menggambarkan **hukum bilangan besar**: dalam kondisi percobaan independen dengan peluang tetap, frekuensi relatif mendekati peluang model ketika jumlah percobaan bertambah. Hukum ini tidak menjamin hasil pendek berikutnya “mengimbangi” selisih masa lalu.
+
+:::caution[Kekeliruan penjudi]
+Jika lima lemparan pertama semuanya angka, peluang gambar pada lemparan keenam koin adil tetap 0,5. Hasil lampau tidak memaksa urutan berikutnya menyeimbangkan tabel. Jika koin mungkin tidak adil, data lampau dapat memberi informasi tentang peluang yang belum diketahui.
+:::
+
+## Simulasi menjawab pertanyaan yang tepat
+
+Simulasi koin memeriksa perilaku **model koin adil**. Simulasi tidak memperbaiki bias pemilihan sampel dan tidak membuktikan bahwa model sesuai dengan keadaan nyata. Pertanyaan “apa yang terjadi jika model ini benar?” berbeda dari “apakah model ini benar di lapangan?”.
+
+### Eksperimen nyata dan simulasi komputer
+
+Keduanya dapat menghasilkan frekuensi relatif, tetapi asal hasil berbeda:
+
+| | Eksperimen nyata | Simulasi |
+|---|---|---|
+| Hasil berasal dari | Pengukuran atau percobaan fisik | Algoritma pengacak dan model yang ditulis |
+| Contoh | Lempar koin sungguhan 100 kali | Kode membangkitkan 100 hasil koin |
+| Kelebihan | Mengamati proses nyata | Cepat, dapat diulang, mudah mengubah asumsi |
+| Batas | Biaya, waktu, alat, dan prosedur dapat memengaruhi hasil | Hanya sebaik model; tidak membuktikan model sesuai dunia nyata |
+
+Peluang empiris dari eksperimen mendekati peluang model ketika percobaan memenuhi syarat dan pengulangan cukup banyak, tetapi tidak harus sama persis. Simulasi membantu melihat variasi yang mungkin **jika asumsi model benar**. Menjalankan satu simulasi bukan pengganti pengumpulan data nyata.
+
+## Mini test
+
+1. Ubah seed menjadi 7 dan ulangi. Apakah ketiga proporsi harus sama dengan tabel di atas?
+2. Jika 100 lemparan menghasilkan 60 angka, apakah koin pasti tidak adil?
+3. Pada model koin adil, berapa peluang A setelah urutan AAAAA?
+
+<details>
+<summary>Periksa pembahasan</summary>
+<p>Seed berbeda menghasilkan urutan dan proporsi berbeda. Enam puluh angka dari 100 lemparan mungkin terjadi bahkan pada koin adil; untuk menilai bukti diperlukan model variasi sampling dan konteks pengujian. Pada lemparan berikutnya, peluang angka tetap 0,5 jika setiap lemparan independen dan koin adil.</p>
+</details>
+
+## Evaluasi lab: jumlah dua dadu
+
+Prediksi dulu jumlah yang paling sering muncul ketika dua dadu dilempar. Bandingkan peluang teoretis dengan frekuensi relatif hasil simulasi. Ubah `ulangan` atau `seed`; hasil simulasi dapat berubah, sedangkan peluang teoretis pada dua dadu adil tetap sama.
+
+<RunnablePlot title="Evaluasi probabilitas: dua dadu" code={`import matplotlib
+matplotlib.use("AGG")
+import numpy as np
+import matplotlib.pyplot as plt
+
+ulangan = 2000
+seed = 12
+rng = np.random.default_rng(seed)
+dadu_1 = rng.integers(1, 7, size=ulangan)
+dadu_2 = rng.integers(1, 7, size=ulangan)
+jumlah = dadu_1 + dadu_2
+nilai = np.arange(2, 13)
+frekuensi = np.array([(jumlah == x).sum() for x in nilai])
+peluang_empiris = frekuensi / ulangan
+cara = np.array([1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]) / 36
+
+print("Jumlah lemparan:", ulangan)
+for x, empirik, teori in zip(nilai, peluang_empiris, cara):
+    print(x, "empiris =", round(float(empirik), 3),
+          "| teoretis =", round(float(teori), 3))
+
+fig, ax = plt.subplots(figsize=(7, 4))
+ax.bar(nilai - 0.18, peluang_empiris, width=0.36,
+       color="#1876b8", label="Simulasi")
+ax.bar(nilai + 0.18, cara, width=0.36,
+       color="#e6b84a", label="Teoretis")
+ax.set_xticks(nilai)
+ax.set_xlabel("Jumlah dua dadu")
+ax.set_ylabel("Peluang / proporsi")
+ax.set_title("Peluang jumlah dua dadu")
+ax.legend()
+fig.tight_layout()
+fig.savefig("/tmp/statistik-plot.svg")
+`} />
+
+### Jawab setelah menjalankan
+
+1. Jumlah berapa yang mempunyai peluang teoretis paling besar? Mengapa jumlah 7 memiliki lebih banyak pasangan hasil?
+2. Apakah setiap jumlah simulasi harus persis sama dengan peluang teoretis? Jelaskan.
+3. Ubah `ulangan` dari 2.000 menjadi 100. Apakah selisih simulasi dari nilai teoretis cenderung lebih terlihat?
+4. Ubah `seed`. Bagian mana dari grafik yang berubah dan bagian mana yang tetap?
+5. Tuliskan satu kalimat yang membedakan “hasil simulasi” dari “hasil nyata”.
+
+<details>
+<summary>Pembahasan</summary>
+<p>Jumlah 7 paling mungkin karena ada enam pasangan berurutan yang menghasilkannya: (1,6), (2,5), (3,4), (4,3), (5,2), dan (6,1). Hasil simulasi bervariasi dan tidak harus tepat sama dengan teori. Dengan lebih sedikit ulangan, variasi relatif biasanya tampak lebih besar. Seed mengubah hasil acak simulasi, tetapi batang teoretis tetap. Simulasi menunjukkan konsekuensi model dua dadu adil, bukan bukti bahwa dadu nyata seimbang.</p>
+</details>
+
+## Kesimpulan
+
+Eksperimen mengamati proses nyata; simulasi menjalankan model proses. Keduanya memakai pengulangan dan frekuensi relatif, tetapi menjawab pertanyaan yang berbeda. Gunakan seed agar contoh dapat diulang, jumlah pengulangan yang memadai untuk melihat pola, dan selalu tulis asumsi model. Dekati nilai teoretis sebagai kecenderungan, bukan janji bahwa setiap rangkaian pendek harus seimbang.

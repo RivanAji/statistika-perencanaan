@@ -1,0 +1,115 @@
+---
+title: Dasar Matplotlib untuk statistik
+description: Mengenal Figure, Axes, pemetaan data ke grafik, dan baris kode Matplotlib.
+---
+
+Matplotlib mengubah nilai menjadi gambar. Bayangkan **Figure** sebagai selembar kertas dan **Axes** sebagai bidang gambar tempat titik, batang, garis, judul, serta sumbu diletakkan. Satu Figure dapat berisi satu atau beberapa Axes.
+
+Dokumentasi resmi menyebut pyplot sebagai kumpulan fungsi untuk membuat dan menghias Figure/Axes. Di bawah ini kita memakai pola berorientasi objek: fig memegang keseluruhan gambar, ax memegang satu bidang grafik. Pola ini memudahkan pengaturan ketika satu Figure memiliki beberapa grafik. Lihat [Pyplot tutorial](https://matplotlib.org/stable/tutorials/pyplot.html), [Introduction to Figures](https://matplotlib.org/stable/users/explain/figure/figure_intro.html), dan [Introduction to Axes](https://matplotlib.org/stable/users/explain/axes/axes_intro.html).
+
+## Grafik pertama, satu per satu
+
+Data berikut adalah jumlah empat moda dalam delapan baris simulasi:
+
+~~~python
+import matplotlib.pyplot as plt
+
+moda = ["Bus", "Jalan kaki", "Motor", "Sepeda"]
+jumlah = [2, 2, 2, 2]
+
+fig, ax = plt.subplots(figsize=(7, 4))
+batang = ax.bar(moda, jumlah, color="#1876b8")
+ax.set_title("Jumlah perjalanan per moda")
+ax.set_xlabel("Moda")
+ax.set_ylabel("Jumlah perjalanan")
+ax.set_ylim(0, 3)
+fig.tight_layout()
+plt.show()
+~~~
+
+| Baris | Artinya |
+|---|---|
+| import matplotlib.pyplot as plt | Memuat antarmuka gambar dan memberinya nama pendek plt. |
+| moda = [...] | Menetapkan nama kategori untuk sumbu mendatar. |
+| jumlah = [...] | Menetapkan tinggi tiap batang; posisinya harus berpasangan dengan moda. |
+| fig, ax = plt.subplots(figsize=(7, 4)) | Membuat Figure selebar 7 dan setinggi 4 inci serta satu bidang Axes. fig dan ax adalah dua objek berbeda. |
+| batang = ax.bar(...) | Menggambar batang kategori dan menyimpan objek batang untuk kemungkinan diberi label angka. |
+| ax.set_title(...) | Memberi judul yang menjelaskan isi grafik. |
+| ax.set_xlabel(...) | Menamai variabel pada sumbu mendatar. |
+| ax.set_ylabel(...) | Menamai besaran yang dibaca pada sumbu tegak. Cantumkan satuan jika berupa ukuran. |
+| ax.set_ylim(0, 3) | Mengatur batas sumbu tegak. Untuk batang jumlah, mulai dari nol agar panjangnya mewakili perbandingan secara jujur. |
+| fig.tight_layout() | Merapikan jarak agar judul dan label tidak terpotong. |
+| plt.show() | Meminta notebook menampilkan Figure. Di lab situs, grafik disimpan ke SVG agar hasilnya bisa ditampilkan langsung. |
+
+Keluaran berupa empat batang sama tinggi. Setiap batang mewakili satu kategori, bukan satu individu. Bila jumlah kategori tidak sama, panjang batang akan menunjukkan perbedaan frekuensi.
+
+## Apa yang dimaksud data dan artist?
+
+Dalam Matplotlib, pemanggilan fungsi seperti ax.bar(...) membuat unsur visual. Batang, titik, garis, judul, tanda sumbu, dan teks merupakan bagian gambar yang dapat diatur. Anda tidak perlu menghafal istilah artist dahulu; pahami bahwa setiap pemanggilan menambahkan satu unsur pada Axes.
+
+| Bagian | Analogi | Contoh |
+|---|---|---|
+| Figure (fig) | Lembar kertas | ukuran dan berkas gambar |
+| Axes (ax) | Bidang tempat menggambar | sumbu, judul, grafik |
+| Data | Nilai yang akan ditampilkan | nama kategori dan frekuensi |
+| Mark | Bentuk yang mewakili data | batang, titik, garis |
+| Label | Keterangan bagi pembaca | judul, nama sumbu, legenda |
+
+## Pola yang dipakai di dalam modul
+
+Buat Figure dan Axes secara eksplisit:
+
+~~~python
+fig, ax = plt.subplots(figsize=(7, 4))
+~~~
+
+Panggil metode pada ax untuk menggambar satu grafik:
+
+~~~python
+ax.hist(waktu, bins=6)
+~~~
+
+Panggil metode pada fig untuk mengatur atau menyimpan seluruh Figure:
+
+~~~python
+fig.tight_layout()
+fig.savefig("grafik.svg", bbox_inches="tight")
+~~~
+
+plt.show() cocok di notebook biasa. savefig() menyimpan gambar ke berkas; pada lab interaktif modul, nama berkasnya harus /tmp/statistik-plot.svg agar halaman dapat mengambil grafik hasil kode. Tidak perlu memanggil keduanya sekaligus dalam lab tersebut.
+
+## Tambahkan lapisan secara sengaja
+
+Grafik yang mudah dibaca biasanya cukup punya satu judul informatif, label sumbu dengan satuan, tanda ukuran yang masuk akal, dan sedikit warna yang masing-masing punya fungsi. Grid tipis dapat membantu membaca nilai; legenda diperlukan jika ada lebih dari satu seri atau kelompok.
+
+~~~python
+fig, ax = plt.subplots(figsize=(7, 4))
+ax.scatter(jarak_meter, waktu_menit, color="#1876b8", s=55)
+ax.set_title("Waktu dan jarak ke taman")
+ax.set_xlabel("Jarak (meter)")
+ax.set_ylabel("Waktu jalan kaki (menit)")
+ax.grid(axis="y", alpha=0.25)
+fig.tight_layout()
+plt.show()
+~~~
+
+| Baris | Fungsi |
+|---|---|
+| ax.scatter(...) | Menempatkan satu titik untuk setiap pasangan jarak dan waktu. s mengatur ukuran simbol, bukan nilai data. |
+| color=... | Memakai satu warna karena pada contoh ini hanya ada satu kelompok. |
+| ax.grid(axis="y", alpha=0.25) | Menambah garis bantu horizontal yang pucat agar nilai waktu lebih mudah diperkirakan. Grid bukan data. |
+| fig.tight_layout() | Mengatur jarak setelah judul dan label dipasang. |
+
+Contoh ini memakai data taman simulasi. Bila titik dikelompokkan dengan warna, sertakan legenda dan jangan mengandalkan warna saja: tulis nama kelompok pada legenda, gunakan simbol berbeda bila perlu, dan jelaskan unit setiap sumbu.
+
+## Aturan praktis sebelum membagikan grafik
+
+1. **Mulai dari pertanyaan.** Apakah ingin membandingkan kategori, melihat sebaran satu angka, mengikuti waktu, atau melihat hubungan dua ukuran?
+2. **Cocokkan bentuk dengan skala.** Kategori tidak memiliki jarak numerik; jangan gambarkan kategori nominal sebagai garis tren.
+3. **Tulis judul yang menyebut isi.** Hindari judul generik seperti “Grafik 1”.
+4. **Tulis nama dan satuan sumbu.** “Jarak (meter)” lebih informatif daripada “Jarak”.
+5. **Jaga tanda perbandingan.** Batang jumlah dimulai dari nol. Bila sumbu sengaja dipotong untuk titik atau garis, tunjukkan dan jelaskan batasnya.
+6. **Periksa data yang tidak terlihat.** Catat nilai hilang, jumlah observasi, cara pengelompokan interval, dan sumber data.
+7. **Baca ulang sebagai orang lain.** Bisakah seseorang memahami apa yang dihitung tanpa membuka kode?
+
+Materi ini disatukan dengan panduan memilih grafik dan penyajian data di [visualisasi data dengan Matplotlib](../visualisasi-deskriptif/).

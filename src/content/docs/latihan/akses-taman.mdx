@@ -1,0 +1,300 @@
+---
+title: 'Praktik mandiri: membaca data akses taman'
+description: Latihan terpadu tentang ukuran pemusatan, penyebaran, grafik, dan peluang dengan Python.
+---
+
+import RunnablePlot from '../../../components/RunnablePlot.astro';
+
+Sebuah tim ingin memahami waktu berjalan kaki dari 12 zona ilustratif menuju taman terdekat. Mereka juga mencatat jarak dan kondisi trotoar. Gunakan data latihan ini untuk merangkum angka, memilih grafik, lalu menghitung peluang dari tabel.
+
+Data berikut **simulasi**, bukan hasil survei. Setiap baris mewakili satu zona buatan. Karena cara memilih zona tidak dirancang sebagai sampel kota, hasilnya hanya menjelaskan tabel latihan ini.
+
+[Unduh CSV akses taman](../../data/akses_taman_latihan.csv) · [Buka kamus data](../../unduh-data/)
+
+| Kolom | Arti | Jenis data |
+|---|---|---|
+| `zona` | Kode zona A sampai L | Kategori penanda |
+| `jalan_kaki_menit` | Waktu berjalan kaki dalam menit | Angka, skala rasio |
+| `jarak_meter` | Jarak dalam meter | Angka, skala rasio |
+| `kondisi_trotoar` | Baik, Cukup, atau Kurang | Kategori berurutan |
+
+## 1. Kenali pertanyaan dan tabel
+
+Sebelum menghitung, pastikan satu baris mewakili apa, kolom mana yang akan dipakai, dan apa satuannya. Dalam latihan ini, “zona dengan waktu lebih dari 12 menit” berarti nilai `jalan_kaki_menit` **lebih besar dari 12**. Zona dengan waktu tepat 12 menit tidak termasuk.
+
+Mulai dengan membaca tabel dan memeriksa isinya.
+
+~~~python
+import pandas as pd
+
+taman = pd.read_csv("akses_taman_latihan.csv")
+print("Ukuran tabel:", taman.shape)
+print(taman.head())
+print(taman.isna().sum())
+~~~
+
+Hasil awal yang diharapkan:
+
+~~~text
+Ukuran tabel: (12, 4)
+   zona  jalan_kaki_menit  jarak_meter kondisi_trotoar
+0     A                 6          450            Baik
+1     B                 9          700            Baik
+2     C                14          900           Cukup
+3     D                 8          600            Baik
+4     E                17         1200          Kurang
+~~~
+
+Tabel memiliki 12 baris dan 4 kolom. `isna().sum()` menghitung sel kosong pada setiap kolom. Jika berkas CSV berada di komputer, unggah dulu ke panel **Files** Colab. Anda juga dapat menyalin daftar angka dari lab di halaman ini tanpa mengunggah berkas.
+
+## 2. Soal ukuran pemusatan
+
+Ukuran pemusatan memberi gambaran nilai yang mewakili kumpulan data. Rata-rata menggunakan semua nilai, median menunjukkan nilai tengah setelah data diurutkan, dan modus adalah nilai yang paling sering muncul.
+
+Gunakan waktu berjalan kaki untuk menjawab:
+
+1. Hitung rata-rata, median, dan modus.
+2. Jika seseorang bertanya “biasanya perlu berapa menit?”, ukuran mana yang akan Anda sebutkan? Jelaskan alasan pilihan Anda.
+3. Apakah rata-rata dan median sama? Apa yang membuat keduanya berbeda pada data ini?
+
+### Coba di Lab Python
+
+Jalankan kode. Setelah itu, ubah satu nilai waktu menjadi `35`. Perhatikan perubahan rata-rata dan median. Kembalikan nilai sebelum melanjutkan.
+
+<RunnablePlot title="Hitung ukuran pemusatan" code={`from statistics import mean, median, multimode
+
+waktu = [6, 9, 14, 8, 17, 11, 7, 15, 10, 12, 19, 8]
+
+print("Jumlah zona:", len(waktu))
+print("Rata-rata:", round(mean(waktu), 2), "menit")
+print("Median:", median(waktu), "menit")
+print("Modus:", multimode(waktu), "menit")
+`}/>
+
+<details>
+  <summary>Periksa jawaban ukuran pemusatan</summary>
+
+  Rata-rata **11,33 menit**, median **10,5 menit**, dan modus **8 menit**. Nilai 8 muncul dua kali, lebih sering daripada nilai lainnya. Rata-rata lebih tinggi daripada median karena beberapa waktu yang relatif lama, seperti 17 dan 19 menit, ikut menarik rata-rata ke atas. Untuk menyebut nilai tengah yang mewakili zona, median dapat menjadi pilihan yang mudah dijelaskan. Jika yang dicari adalah total waktu dibagi rata untuk semua zona dalam tabel, rata-rata menjawab pertanyaan itu.
+
+</details>
+
+## 3. Soal ukuran penyebaran dan pencilan
+
+Ukuran penyebaran menjelaskan seberapa berjauhan nilai-nilai dalam data. Rentang hanya memakai nilai terkecil dan terbesar. IQR merangkum lebar bagian tengah data. Simpangan baku mengukur jarak nilai dari rata-rata, dengan satuan yang sama seperti data asal.
+
+Kerjakan soal berikut:
+
+1. Hitung rentang waktu berjalan kaki.
+2. Hitung kuartil pertama (Q1), kuartil ketiga (Q3), dan IQR.
+3. Gunakan batas pencilan IQR: di bawah `Q1 - 1,5 × IQR` atau di atas `Q3 + 1,5 × IQR`. Apakah ada nilai yang melewati batas tersebut?
+4. Bandingkan simpangan baku populasi dan sampel. Mana yang sesuai jika 12 zona ini adalah seluruh kumpulan yang sedang diringkas? Mana yang dipakai jika 12 zona dianggap sebagai sampel untuk memperkirakan kumpulan yang lebih besar?
+5. Mengapa nilai yang melewati batas IQR perlu diperiksa, tetapi tidak otomatis dihapus?
+
+### Coba di Lab Python
+
+Kode di bawah memakai definisi kuartil `inclusive` dari pustaka Python. Perangkat lunak lain dapat memakai cara interpolasi kuartil yang berbeda, sehingga angka Q3 kadang sedikit berbeda. Untuk latihan ini, ikuti metode yang dicetak oleh kode.
+
+<RunnablePlot title="Ukur sebaran dan periksa nilai ekstrem" code={`from statistics import mean, quantiles, pstdev, stdev
+
+waktu = [6, 9, 14, 8, 17, 11, 7, 15, 10, 12, 19, 8]
+urut = sorted(waktu)
+q1, _, q3 = quantiles(waktu, n=4, method="inclusive")
+iqr = q3 - q1
+batas_bawah = q1 - 1.5 * iqr
+batas_atas = q3 + 1.5 * iqr
+pencilan_potensial = [nilai for nilai in waktu
+                      if nilai < batas_bawah or nilai > batas_atas]
+
+print("Data terurut:", urut)
+print("Rentang:", max(waktu) - min(waktu), "menit")
+print("Q1:", q1, "| Q3:", q3, "| IQR:", iqr, "menit")
+print("Batas IQR:", round(batas_bawah, 3), "sampai", round(batas_atas, 3))
+print("Nilai di luar batas:", pencilan_potensial)
+print("Simpangan baku populasi:", round(pstdev(waktu), 2), "menit")
+print("Simpangan baku sampel:", round(stdev(waktu), 2), "menit")
+`}/>
+
+<details>
+  <summary>Periksa jawaban ukuran penyebaran</summary>
+
+  Rentangnya **13 menit** (`19 - 6`). Dengan metode kuartil yang dipakai pada kode, Q1 = **8**, Q3 = **14,25**, dan IQR = **6,25 menit**. Batas IQR adalah **-1,375 sampai 23,625 menit**. Tidak ada nilai di luar batas itu, jadi aturan ini tidak menandai pencilan potensial pada data latihan.
+
+  Simpangan baku populasi sekitar **3,97 menit**. Simpangan baku sampel sekitar **4,14 menit**. Gunakan simpangan baku populasi saat 12 zona adalah seluruh objek yang sedang diringkas. Gunakan simpangan baku sampel saat data diperlakukan sebagai sampel untuk memperkirakan kumpulan yang lebih besar.
+
+  Batas IQR membantu menemukan nilai yang patut diperiksa. Nilai ekstrem dapat berasal dari salah ketik, alat ukur, kondisi nyata yang jarang, atau variasi biasa. Periksa sumber dan konteks sebelum memperbaiki atau menghapusnya.
+
+</details>
+
+:::note[Catatan metode kuartil]
+Perangkat lunak statistik dapat menggunakan definisi kuartil yang berbeda, terutama pada jumlah data kecil. Sebutkan metode yang dipakai saat melaporkan Q1 dan Q3. Jika mahasiswa memperoleh Q3 sedikit berbeda dengan metode lain, periksa cara hitungnya sebelum menganggap jawabannya salah.
+:::
+
+## 4. Soal penyajian dan visualisasi
+
+Pilih grafik berdasarkan pertanyaan dan jenis datanya. Histogram atau boxplot cocok untuk melihat sebaran satu kolom angka. Diagram batang membandingkan jumlah kategori. Diagram pencar melihat pola antara dua kolom angka.
+
+Pilih grafik untuk setiap tujuan berikut, lalu jelaskan satu pola yang terlihat:
+
+1. Melihat bentuk sebaran waktu berjalan kaki.
+2. Membandingkan jumlah zona pada tiap kategori kondisi trotoar.
+3. Melihat apakah zona dengan jarak lebih jauh cenderung memiliki waktu berjalan kaki lebih lama.
+4. Jelaskan mengapa diagram garis kurang sesuai untuk menghubungkan kode zona A sampai L. Kode tersebut tidak menyatakan urutan waktu.
+5. Apakah grafik dapat membuktikan bahwa kondisi trotoar menyebabkan waktu berjalan kaki lebih lama? Jelaskan.
+
+Sebagai pilihan tambahan, coba tampilkan kondisi trotoar sebagai diagram lingkaran. Setiap irisan harus mewakili bagian dari 12 zona. Bandingkan apakah diagram batang atau diagram lingkaran lebih mudah dipakai untuk membandingkan kategori.
+
+### Coba di Lab Python
+
+Jalankan kode untuk membuat histogram, boxplot, diagram batang, dan diagram pencar. Ubah lebar kelas histogram (`bins`) atau judulnya, lalu jalankan kembali. Perubahan tampilan dapat membantu membaca data, tetapi tidak mengubah nilai pengamatan.
+
+<RunnablePlot title="Bandingkan empat bentuk grafik" code={`import matplotlib
+matplotlib.use("AGG")
+import matplotlib.pyplot as plt
+
+zona = list("ABCDEFGHIJKL")
+waktu = [6, 9, 14, 8, 17, 11, 7, 15, 10, 12, 19, 8]
+jarak = [450, 700, 900, 600, 1200, 800, 500, 1000, 750, 850, 1400, 550]
+trotoar = ["Baik", "Baik", "Cukup", "Baik", "Kurang", "Cukup",
+           "Baik", "Kurang", "Cukup", "Cukup", "Kurang", "Baik"]
+
+kategori = ["Baik", "Cukup", "Kurang"]
+jumlah = [trotoar.count(label) for label in kategori]
+fig, axes = plt.subplots(2, 2, figsize=(9, 6))
+
+axes[0, 0].hist(waktu, bins=6, color="#39a8c4", edgecolor="white")
+axes[0, 0].set(title="Sebaran waktu", xlabel="Menit", ylabel="Jumlah zona")
+
+axes[0, 1].boxplot(waktu, vert=False)
+axes[0, 1].set(title="Ringkasan waktu", xlabel="Menit", yticks=[])
+
+axes[1, 0].bar(kategori, jumlah, color=["#2582bb", "#38a6b4", "#e3b644"])
+axes[1, 0].set(title="Kondisi trotoar", ylabel="Jumlah zona")
+
+axes[1, 1].scatter(jarak, waktu, color="#16769a", s=55)
+for i, label in enumerate(zona):
+    axes[1, 1].annotate(label, (jarak[i], waktu[i]), xytext=(4, 3),
+                        textcoords="offset points", fontsize=8)
+axes[1, 1].set(title="Jarak dan waktu", xlabel="Jarak (meter)",
+               ylabel="Waktu (menit)")
+
+fig.suptitle("Data simulasi 12 zona")
+fig.tight_layout()
+fig.savefig("/tmp/statistik-plot.svg")
+`}/>
+
+<details>
+  <summary>Periksa jawaban visualisasi</summary>
+
+  Histogram memperlihatkan sebaran angka waktu dan boxplot merangkum median, kuartil, serta rentang. Diagram batang menunjukkan **5 zona Baik, 4 zona Cukup, dan 3 zona Kurang**. Diagram lingkaran juga dapat menunjukkan bagian kategori: sekitar **42% Baik, 33% Cukup, dan 25% Kurang**. Diagram batang biasanya lebih mudah untuk membandingkan nilai yang berdekatan. Diagram pencar menempatkan jarak pada sumbu mendatar dan waktu pada sumbu tegak. Titik-titik pada tabel cenderung bergerak ke kanan-atas, tetapi grafik ini hanya memperlihatkan pola bersama. Data simulasi kecil tanpa rancangan pengamatan nyata tidak cukup untuk menyatakan sebab-akibat atau membuat kesimpulan tentang kota.
+
+  Diagram garis biasanya menghubungkan pengamatan yang memiliki urutan bermakna, seperti hari atau tahun. Kode zona A sampai L hanya label. Menghubungkannya dengan garis dapat memberi kesan ada perubahan berurutan yang sebenarnya tidak didefinisikan.
+
+</details>
+
+## 5. Soal peluang dari tabel
+
+Anggap satu baris dipilih secara acak dari **12 baris latihan**. Ruang sampelnya adalah 12 zona tersebut. Definisikan:
+
+- A: zona memiliki waktu berjalan kaki lebih dari 12 menit.
+- B: zona memiliki kondisi trotoar Kurang.
+
+```text
+Ruang sampel S = {A, B, C, D, E, F, G, H, I, J, K, L}
+
+Kejadian A = {C, E, H, K}       (waktu > 12 menit)
+Kejadian B = {E, H, K}          (trotoar Kurang)
+Irisan A dan B = {E, H, K}
+```
+
+Kerjakan pertanyaan berikut sebelum membuka pembahasan:
+
+1. Hitung peluang A dan peluang komplemennya, yaitu waktu 12 menit atau kurang.
+2. Hitung peluang B dan peluang A sekaligus B.
+3. Hitung peluang A atau B. Ingat, zona yang masuk keduanya hanya dihitung satu kali.
+4. Jika diketahui zona yang dipilih memiliki trotoar Kurang, berapa peluang waktunya lebih dari 12 menit?
+5. Apakah A dan B saling bebas pada tabel ini? Bandingkan `P(A dan B)` dengan `P(A) × P(B)`.
+6. Jika ambang diubah menjadi `12 menit atau lebih`, apa yang berubah? Mengapa penting membedakan `>` dengan `>=`?
+
+### Gambar ruang sampel dan kejadian
+
+Pada diagram, kotak mewakili semua zona. Lingkaran A dan B adalah kelompok zona yang memenuhi masing-masing kejadian. Bagian yang bertumpuk adalah zona yang memenuhi A dan B sekaligus.
+
+<figure class="probability-figure">
+  <svg viewBox="0 0 620 300" role="img" aria-labelledby="venn-title venn-desc" style="width: 100%; height: auto;">
+    <title id="venn-title">Diagram ruang sampel dan dua kejadian</title>
+    <desc id="venn-desc">Kotak S berisi semua zona. Oval A berisi zona dengan waktu lebih dari 12 menit. Oval B seluruhnya berada di dalam A dan berisi zona bertrotoar kurang. Semua anggota B pada tabel ini juga memenuhi A.</desc>
+    <rect x="20" y="22" width="580" height="250" rx="14" fill="#f2f8fb" stroke="#397e9c" stroke-width="3" />
+    <text x="42" y="54" font-size="22" font-weight="700" fill="#173b50">Ruang sampel S: 12 zona</text>
+    <ellipse cx="300" cy="163" rx="205" ry="88" fill="#58b8d0" fill-opacity="0.45" stroke="#16769a" stroke-width="3" />
+    <ellipse cx="370" cy="163" rx="66" ry="46" fill="#efc14b" fill-opacity="0.82" stroke="#ae8115" stroke-width="3" />
+    <text x="130" y="130" font-size="20" font-weight="700" fill="#173b50">A</text>
+    <text x="361" y="135" font-size="18" font-weight="700" fill="#173b50">B</text>
+    <text x="205" y="169" font-size="15" fill="#173b50">C</text>
+    <text x="343" y="169" font-size="14" font-weight="700" fill="#173b50">E, H, K</text>
+    <text x="40" y="250" font-size="14" fill="#365565">A = &#123;C, E, H, K&#125; · B = &#123;E, H, K&#125; · A ∩ B = &#123;E, H, K&#125;</text>
+  </svg>
+  <figcaption>Zona C berada di bagian A saja. Zona E, H, dan K berada pada irisan karena memenuhi A dan B.</figcaption>
+</figure>
+
+### Coba di Lab Python
+
+Jalankan kode untuk menghitung jumlah baris pada setiap kejadian. Ubah `ambang = 12` menjadi `ambang = 15`, lalu bandingkan hasilnya.
+
+<RunnablePlot title="Hitung peluang empiris" code={`waktu = [6, 9, 14, 8, 17, 11, 7, 15, 10, 12, 19, 8]
+trotoar = ["Baik", "Baik", "Cukup", "Baik", "Kurang", "Cukup",
+           "Baik", "Kurang", "Cukup", "Cukup", "Kurang", "Baik"]
+ambang = 12
+
+kejadian_a = [nilai > ambang for nilai in waktu]
+kejadian_b = [kelas == "Kurang" for kelas in trotoar]
+jumlah_a = sum(kejadian_a)
+jumlah_b = sum(kejadian_b)
+jumlah_irisan = sum(a and b for a, b in zip(kejadian_a, kejadian_b))
+jumlah_gabungan = jumlah_a + jumlah_b - jumlah_irisan
+
+print("P(A):", jumlah_a, "/", len(waktu), "=", round(jumlah_a / len(waktu), 3))
+print("P(waktu 12 menit atau kurang):", len(waktu) - jumlah_a, "/",
+      len(waktu), "=", round(1 - jumlah_a / len(waktu), 3))
+print("P(B):", jumlah_b, "/", len(waktu), "=", round(jumlah_b / len(waktu), 3))
+print("P(A dan B):", jumlah_irisan, "/", len(waktu))
+print("P(A atau B):", jumlah_gabungan, "/", len(waktu))
+print("P(A | B):", jumlah_irisan, "/", jumlah_b,
+      "=", round(jumlah_irisan / jumlah_b, 3))
+print("P(A) x P(B):", round((jumlah_a / len(waktu)) *
+                            (jumlah_b / len(waktu)), 3))
+`}/>
+
+<details>
+  <summary>Periksa jawaban probabilitas</summary>
+
+  A = `{C, E, H, K}`, jadi P(A) = **4/12 = 1/3 ≈ 0,333**. Peluang komplemennya, waktu 12 menit atau kurang, adalah **8/12 = 2/3 ≈ 0,667**.
+
+  B = `{E, H, K}`, sehingga P(B) = **3/12 = 1/4 = 0,25**. Ketiga zona B juga berada dalam A, jadi P(A dan B) = **3/12 = 1/4**. Untuk gabungan, P(A atau B) = P(A) + P(B) - P(A dan B) = **4/12 + 3/12 - 3/12 = 4/12 = 1/3**.
+
+  Jika sudah diketahui trotoarnya Kurang, ruang sampelnya menyusut menjadi E, H, dan K. Ketiganya memiliki waktu lebih dari 12 menit, jadi P(A | B) = **3/3 = 1** pada tabel ini. Artinya semua tiga baris kategori Kurang memenuhi batas tersebut. Angka ini tidak membuktikan pola yang sama akan berlaku di lokasi nyata.
+
+  A dan B **tidak saling bebas** pada tabel ini: P(A dan B) = **0,25**, sedangkan P(A) × P(B) = **(1/3) × (1/4) = 1/12 ≈ 0,083**. Mengubah ambang menjadi 15 sambil tetap memakai `>` mengubah A menjadi `{E, K}`, sehingga jumlah A menjadi **2 dari 12**. Jika memakai `>= 12`, zona J dengan waktu tepat 12 menit ikut masuk; karena itu operator perbandingan harus sesuai pertanyaan.
+
+</details>
+
+:::note[Peluang empiris dan peluang untuk populasi]
+Nilai seperti 4/12 adalah proporsi baris pada tabel latihan. Nilai itu dapat dibaca sebagai peluang empiris jika kita memilih satu baris secara acak dari tabel. Ia tidak otomatis menjadi peluang untuk semua zona di suatu kota. Untuk membuat kesimpulan tentang kota, kita memerlukan data lapangan dan cara pemilihan zona yang dapat dipertanggungjawabkan.
+:::
+
+## 6. Tantangan penutup
+
+Tulis ringkasan singkat untuk pembaca yang belum melihat notebook Anda. Sertakan:
+
+1. Satu angka pemusatan dan satu angka penyebaran, lengkap dengan satuan.
+2. Satu grafik yang paling membantu menjawab pertanyaan Anda, disertai alasan pemilihannya.
+3. Satu peluang yang dihitung dari tabel, dalam bentuk pecahan dan desimal.
+4. Satu batas kesimpulan yang perlu diketahui pembaca.
+
+Contoh pembuka: “Pada tabel simulasi berisi 12 zona, median waktu berjalan kaki adalah … menit. Saya memakai … untuk menggambarkan penyebaran karena …” Lengkapi dengan hasil hitung Anda sendiri.
+
+<details>
+  <summary>Daftar periksa sebelum dikumpulkan</summary>
+
+  Pastikan setiap angka merujuk pada kolom dan satuan yang tepat. Tulis pembilang dan penyebut untuk peluang. Periksa apakah ambang memakai `>` atau `>=`. Beri judul dan label sumbu pada grafik. Sebutkan bahwa data ini simulasi, lalu hindari menyatakan hubungan sebagai sebab-akibat.
+
+</details>

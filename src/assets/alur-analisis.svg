@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 170" role="img" aria-labelledby="title desc">
+<title id="title">Alur kerja analisis statistik</title><desc id="desc">Pertanyaan, definisi data, pemeriksaan, perhitungan, dan kesimpulan dengan batasnya.</desc>
+<rect width="900" height="170" rx="8" fill="#f7fbfc"/>
+<g font-family="Arial,sans-serif" font-size="19" text-anchor="middle" fill="#173440">
+<rect x="18" y="52" width="150" height="66" rx="6" fill="#e3f3f7"/><text x="93" y="91">Pertanyaan</text>
+<rect x="196" y="52" width="150" height="66" rx="6" fill="#e3f3f7"/><text x="271" y="91">Definisi data</text>
+<rect x="374" y="52" width="150" height="66" rx="6" fill="#e3f3f7"/><text x="449" y="91">Pemeriksaan</text>
+<rect x="552" y="52" width="150" height="66" rx="6" fill="#e3f3f7"/><text x="627" y="91">Perhitungan</text>
+<rect x="730" y="52" width="152" height="66" rx="6" fill="#1459b5"/><text x="806" y="82" fill="#fff">Kesimpulan</text><text x="806" y="104" fill="#fff" font-size="14">dan batasnya</text>
+</g><g stroke="#1459b5" stroke-width="3" fill="none"><path d="M170 85h23m155 0h23m155 0h23m155 0h23"/></g><g fill="#1459b5"><path d="m189 79 8 6-8 6m182-12 8 6-8 6m182-12 8 6-8 6m182-12 8 6-8 6"/></g>
+</svg>

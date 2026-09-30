@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 290" role="img" aria-labelledby="title desc">
+<title id="title">Tiga jenis temuan pada pemeriksaan data</title>
+<desc id="desc">Tanda tanya menandai nilai hilang yang perlu dicari sebabnya; minus empat menit melanggar domain durasi; seratus dua puluh menit tinggi tetapi mungkin sah dan perlu konteks.</desc>
+<rect width="760" height="290" fill="#f7fbfc"/>
+<g font-family="Arial,sans-serif" fill="#173440">
+<text x="28" y="40" font-size="22" font-weight="700">Periksa sebelum mengubah</text>
+<text x="34" y="88" font-size="16">Nilai tercatat</text><text x="180" y="88" font-size="16">Temuan</text><text x="455" y="88" font-size="16">Langkah berikutnya</text>
+<path d="M28 102H728 M28 157H728 M28 212H728 M28 268H728" stroke="#9cb6be" stroke-width="1"/>
+<text x="48" y="139" font-size="23" font-weight="700">?</text><text x="180" y="139" font-size="18">Nilai hilang</text><text x="455" y="139" font-size="17">Cari alasan kosong</text>
+<text x="48" y="194" font-size="23" font-weight="700">−4</text><text x="180" y="194" font-size="18">Di luar domain durasi</text><text x="455" y="194" font-size="17">Cocokkan dengan sumber</text>
+<text x="48" y="249" font-size="23" font-weight="700">120</text><text x="180" y="249" font-size="18">Tinggi, belum tentu salah</text><text x="455" y="249" font-size="17">Periksa konteks perjalanan</text>
+</g></svg>

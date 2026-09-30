@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.astro/
+.playwright-cli/
+.venv/
+.DS_Store
+*.pyc
+__pycache__/

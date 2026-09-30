@@ -1,0 +1,106 @@
+---
+interface Props {
+  code: string;
+  title?: string;
+}
+
+const { code, title = 'Coba kode ini' } = Astro.props;
+---
+
+<section class="python-lab" data-python-lab>
+  <div class="python-lab__heading">
+    <div>
+      <p class="python-lab__eyebrow">Lab Python interaktif</p>
+      <h3>{title}</h3>
+    </div>
+    <button class="python-lab__run" type="button">
+      <span aria-hidden="true">▶</span> Jalankan kode
+    </button>
+  </div>
+  <label class="python-lab__label">
+    <span>Kode Python</span>
+    <textarea spellcheck="false" aria-label="Kode Python yang dapat dijalankan">{code}</textarea>
+  </label>
+  <p class="python-lab__status" role="status">Klik Jalankan kode. Pada pemakaian pertama, Python dan Matplotlib perlu dimuat dari internet.</p>
+  <pre class="python-lab__output" hidden></pre>
+  <div class="python-lab__plot" aria-live="polite"></div>
+</section>
+
+<script>
+  // @ts-nocheck
+  const pyodideUrl = 'https://cdn.jsdelivr.net/pyodide/v0.27.7/full/';
+
+  function getPythonRuntime() {
+    if (!window.statisticsPyodidePromise) {
+      window.statisticsPyodidePromise = new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = `${pyodideUrl}pyodide.js`;
+        script.async = true;
+        script.onload = async () => {
+          try {
+            const pyodide = await window.loadPyodide({ indexURL: pyodideUrl });
+            await pyodide.loadPackage('matplotlib');
+            resolve(pyodide);
+          } catch (error) {
+            reject(error);
+          }
+        };
+        script.onerror = () => reject(new Error('Python tidak dapat dimuat. Periksa koneksi internet, lalu coba lagi.'));
+        document.head.append(script);
+      });
+    }
+    return window.statisticsPyodidePromise;
+  }
+
+  document.querySelectorAll('[data-python-lab]').forEach((lab) => {
+    const button = lab.querySelector('.python-lab__run');
+    const editor = lab.querySelector('textarea');
+    const status = lab.querySelector('.python-lab__status');
+    const output = lab.querySelector('.python-lab__output');
+    const plot = lab.querySelector('.python-lab__plot');
+    let previousUrl;
+
+    button.addEventListener('click', async () => {
+      button.disabled = true;
+      output.hidden = true;
+      output.textContent = '';
+      plot.replaceChildren();
+      status.textContent = 'Menyiapkan Python dan menjalankan kode…';
+
+      try {
+        const pyodide = await getPythonRuntime();
+        const messages = [];
+        pyodide.runPython("import os\nif os.path.exists('/tmp/statistik-plot.svg'):\n    os.remove('/tmp/statistik-plot.svg')");
+        await pyodide.loadPackagesFromImports(editor.value);
+        pyodide.setStdout({ batched: (message) => messages.push(message) });
+        pyodide.setStderr({ batched: (message) => messages.push(message) });
+        await pyodide.runPythonAsync(editor.value);
+
+        if (messages.length) {
+          output.textContent = messages.join('\n');
+          output.hidden = false;
+        }
+
+        try {
+          const svg = new TextDecoder().decode(pyodide.FS.readFile('/tmp/statistik-plot.svg'));
+          pyodide.runPython("import matplotlib.pyplot as plt\nplt.close('all')");
+          if (previousUrl) URL.revokeObjectURL(previousUrl);
+          previousUrl = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+          const image = document.createElement('img');
+          image.src = previousUrl;
+          image.alt = 'Grafik yang dihasilkan dari kode Python.';
+          plot.append(image);
+          status.textContent = 'Grafik berhasil dibuat. Ubah angka atau warna pada kode, lalu jalankan kembali.';
+        } catch {
+          status.textContent = 'Kode selesai dijalankan. Tambahkan perintah untuk menyimpan grafik jika ingin menampilkan gambar di sini.';
+        }
+      } catch (error) {
+        output.textContent = String(error);
+        output.hidden = false;
+        status.textContent = 'Kode belum dapat dijalankan. Baca pesan galat di bawah, perbaiki kode, lalu coba lagi.';
+      } finally {
+        button.disabled = false;
+      }
+    });
+  });
+</script>

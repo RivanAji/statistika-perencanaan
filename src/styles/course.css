@@ -1,0 +1,56 @@
+:root {
+  --sl-color-accent-low: #e8f1ff;
+  --sl-color-accent: #1459b5;
+  --sl-color-accent-high: #0b3976;
+  --cover-yellow: #e8ac2e;
+  --sl-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+:root[data-theme='dark'] {
+  --sl-color-accent-low: #152b49;
+  --sl-color-accent: #8cc9ff;
+  --sl-color-accent-high: #d9ecff;
+  --cover-yellow: #f2bd4f;
+}
+body, h1, h2, h3, h4, nav, button, summary { font-family: var(--sl-font); }
+.sl-markdown-content { line-height: 1.68; }
+.sl-markdown-content h2 { margin-block-start: 2.5rem; }
+.sl-markdown-content h3 { margin-block-start: 1.7rem; }
+.sl-markdown-content img { display: block; max-width: 100%; margin: 1.4rem auto; }
+.colab-run-icon { display: inline-grid; width: 1.35rem; height: 1.35rem; margin-inline: 0.1rem 0.25rem; place-items: center; border-radius: 50%; background: var(--sl-color-accent); color: white; font-size: 0.66rem; line-height: 1; vertical-align: -0.15rem; }
+.python-lab { margin: 1.75rem 0 2.25rem; padding: clamp(1rem, 3vw, 1.5rem); border: 1px solid var(--sl-color-gray-4); border-radius: 0.55rem; background: var(--sl-color-accent-low); }
+.python-lab__heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1rem; }
+.python-lab__heading h3 { margin: 0; font-size: 1.2rem; }
+.python-lab__eyebrow { margin: 0 0 0.2rem; color: var(--sl-color-accent-high); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.python-lab__run { display: inline-flex; align-items: center; gap: 0.45rem; flex: none; padding: 0.6rem 0.85rem; border: 0; border-radius: 0.35rem; background: var(--sl-color-accent); color: white; font: inherit; font-weight: 700; cursor: pointer; }
+.python-lab__run:hover:not(:disabled) { filter: brightness(0.92); }
+.python-lab__run:disabled { cursor: wait; opacity: 0.7; }
+.python-lab__label > span { display: block; margin-bottom: 0.4rem; font-size: 0.9rem; font-weight: 700; }
+.python-lab textarea { box-sizing: border-box; display: block; width: 100%; min-height: 19rem; padding: 0.9rem; border: 1px solid var(--sl-color-gray-4); border-radius: 0.35rem; background: var(--sl-color-bg); color: var(--sl-color-text); font: 0.88rem/1.55 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; resize: vertical; }
+.python-lab__status { margin: 0.85rem 0 0; color: var(--sl-color-gray-2); font-size: 0.9rem; }
+.python-lab__output { overflow-x: auto; margin: 0.85rem 0 0; padding: 0.8rem; border-radius: 0.35rem; background: var(--sl-color-bg); font-size: 0.85rem; }
+.python-lab__plot { margin-top: 1rem; }
+.python-lab__plot img { width: 100%; max-width: 44rem; margin: 0; padding: 0.5rem; border-radius: 0.35rem; background: white; }
+.hero { padding-block: clamp(2.5rem, 6vw, 4.5rem) 1rem; }
+.hero > .hero-html { justify-content: center; }
+.hero > .hero-html img { display: block; width: auto; max-width: 100%; height: auto; max-height: 30rem; object-fit: contain; }
+.hero h1::after { content: ''; display: block; width: 4rem; height: 0.25rem; margin-top: 1rem; background: var(--cover-yellow); }
+.hero .tagline { font-size: 1rem; line-height: 1.5; font-weight: 650; color: var(--sl-color-gray-1); }
+.hero .tagline span { font-weight: 400; color: var(--sl-color-gray-2); }
+.sl-markdown-content table { display: block; max-width: 100%; overflow-x: auto; }
+.sl-markdown-content pre { border-radius: 0.35rem; }
+.sl-markdown-content details { border: 1px solid var(--sl-color-gray-4); border-radius: 0.35rem; padding: 0.85rem 1rem; margin: 1.1rem 0; }
+.sl-markdown-content summary { cursor: pointer; font-weight: 650; }
+:where(a, button, summary, input, select, textarea):focus-visible { outline: 3px solid var(--sl-color-accent); outline-offset: 3px; }
+.book-outline { max-width: 54rem; }
+.book-outline p { display: grid; grid-template-columns: minmax(11rem, 17rem) 1fr; gap: 1.5rem; border-top: 1px solid var(--sl-color-gray-4); padding: 0.95rem 0; margin: 0; }
+.book-outline p:last-child { border-bottom: 1px solid var(--sl-color-gray-4); }
+.book-outline a { font-weight: 700; }
+.book-outline span { color: var(--sl-color-gray-2); }
+@media (max-width: 45rem) {
+  .hero h1::after { margin-inline: auto; }
+  .hero > .hero-html img { max-height: 20rem; }
+  .book-outline p { grid-template-columns: 1fr; gap: 0.2rem; }
+  .sl-markdown-content table { font-size: 0.9rem; }
+  .python-lab__heading { align-items: stretch; flex-direction: column; }
+  .python-lab__run { justify-content: center; }
+}
